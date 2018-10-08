@@ -8,7 +8,7 @@ import "./libraries/PermissionLibrary.sol";
 import "./libraries/GroupLibrary.sol";
 import "./libraries/FileLibrary.sol";
 
-contract CounterApp is AragonApp {
+contract Datastore is AragonApp {
     using SafeMath for uint;
 
     /// State
@@ -95,8 +95,9 @@ contract CounterApp is AragonApp {
         _;
     }    
 
-    function initialize(address _datastoreACL) onlyInit public {
-        initialized();
+    function init(address _datastoreACL) onlyInit public
+    {
+        //initialized();
 
         acl = ACL(kernel().acl());
         datastoreACL = DatastoreACL(_datastoreACL);  
@@ -447,6 +448,7 @@ contract CounterApp is AragonApp {
      * @param _entityRead Read permission
      * @param _entityWrite Write permission      
      */
+     /*
     function setMultiplePermissions(uint256 _fileId, uint256[] _groupIds, bool[] _groupRead, bool[] _groupWrite, address[] _entities, bool[] _entityRead, bool[] _entityWrite, bool _isPublic) public onlyFileOwner(_fileId) {
         
         for(uint256 i = 0; i < _groupIds.length; i++) 
@@ -457,7 +459,7 @@ contract CounterApp is AragonApp {
 
         fileList.files[_fileId].isPublic = _isPublic;
         emit NewPermissions(msg.sender);
-    }    
+    } */   
 
     /**
      * @notice Remove group from file permissions
@@ -470,4 +472,21 @@ contract CounterApp is AragonApp {
     }    
 
 
+}
+
+
+contract CounterApp is Datastore {
+
+    function initialize() external {
+        //super.init();
+        initialized();
+
+        settings = Settings({
+            storageProvider: StorageProvider.Ipfs,
+            encryption: EncryptionType.Aes,
+            ipfsHost: "localhost",
+            ipfsPort: 5001,
+            ipfsProtocol: "http"
+        });
+    }
 }

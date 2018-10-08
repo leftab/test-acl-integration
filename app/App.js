@@ -16,6 +16,12 @@ const AppContainer = styled(AragonApp)`
 `
 
 export default class App extends React.Component {
+
+  constructor(props) {
+    super(props)
+    window.app = this
+  }
+
   render () {
     return (
       <AppContainer>
@@ -23,6 +29,7 @@ export default class App extends React.Component {
           <ObservedCount observable={this.props.observable} />
           <Button onClick={() => this.props.app.decrement(1)}>Decrement</Button>
           <Button onClick={() => this.props.app.increment(1)}>Increment</Button>
+          <Button onClick={() => this.props.app.addFile("f", "fe", 123, true)}>Addfile</Button>
         </div>
       </AppContainer>
     )

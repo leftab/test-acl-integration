@@ -59,8 +59,8 @@ contract Kit is KitBase {
                 
         datastoreACL.initialize(app);
 
-        app.initialize(datastoreACL);
-        // Initialize apps
+        app.init(datastoreACL);
+        app.initialize();
 
 
         acl.createPermission(ANY_ENTITY, app, app.INCREMENT_ROLE(), root);
