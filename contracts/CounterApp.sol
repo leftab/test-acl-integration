@@ -20,7 +20,7 @@ contract CounterApp is AragonApp {
     bytes32 constant public INCREMENT_ROLE = keccak256("INCREMENT_ROLE");
     bytes32 constant public DECREMENT_ROLE = keccak256("DECREMENT_ROLE");
 
-    function increment(uint256 step) auth(INCREMENT_ROLE) external {
+    function increment(uint256 step) auth(INCREMENT_ROLE) external auth(DATASTORE_MANAGER_ROLE)  {
         value = value.add(step);
         datastoreACL.test();
     }
