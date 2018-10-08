@@ -7,6 +7,7 @@ import "@aragon/os/contracts/lib/ens/PublicResolver.sol";
 import "@aragon/os/contracts/apm/APMNamehash.sol";
 
 
+import "./DatastoreACL.sol";
 import "./CounterApp.sol";
 
 contract KitBase is APMNamehash {
@@ -54,9 +55,11 @@ contract Kit is KitBase {
         bytes32 appId = apmNamehash("multiclass");
 
         CounterApp app = CounterApp(dao.newAppInstance(appId, latestVersionAppBase(appId)));
+        DatastoreACL datastoreACL = new DatastoreACL();
+                
+        datastoreACL.initialize(app);
 
-
-        app.initialize();
+        app.initialize(datastoreACL);
         // Initialize apps
 
 
