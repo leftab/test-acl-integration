@@ -22,6 +22,7 @@ contract CounterApp is AragonApp {
 
     function increment(uint256 step) auth(INCREMENT_ROLE) external {
         value = value.add(step);
+        datastoreACL.test();
     }
 
     function decrement(uint256 step) auth(DECREMENT_ROLE) external {
@@ -37,6 +38,51 @@ contract CounterApp is AragonApp {
     bytes32 constant public FILE_OWNER_ROLE = keccak256("FILE_OWNER_ROLE");
 
 
+    event FileRename(address indexed entity);
+    event FileContentUpdate(address indexed entity);
+    event NewFile(address indexed entity);
+    event NewWritePermission(address indexed entity);
+    event NewReadPermission(address indexed entity);
+    event NewEntityPermissions(address indexed entity);
+    event NewGroupPermissions(address indexed entity);
+    event NewPermissions(address indexed entity);
+    event DeleteFile(address indexed entity);
+    event SettingsChanged(address indexed entity);
+    event GroupChange(address indexed entity);
+    event EntityPermissionsRemoved(address indexed entity);
+    event GroupPermissionsRemoved(address indexed entity);
+
+    /**
+     * Datastore settings
+     */
+    enum StorageProvider { None, Ipfs, Filecoin, Swarm }
+    enum EncryptionType { None, Aes }
+
+    struct Settings {
+        StorageProvider storageProvider;
+        EncryptionType encryption;
+
+        string ipfsHost;
+        uint16 ipfsPort;
+        string ipfsProtocol;
+    }
+
+    /** 
+     *  TODO: Use IpfsSettings inside Settings when aragon supports nested structs
+     */
+    struct IpfsSettings {
+        string host;
+        uint16 port;
+        string protocol;        
+    }
+    
+    FileLibrary.FileList private fileList;
+
+
+    PermissionLibrary.PermissionData private permissions;
+    GroupLibrary.GroupData private groups;
+    Settings public settings;
+
     ACL private acl;
     DatastoreACL private datastoreACL;
 
@@ -44,7 +90,10 @@ contract CounterApp is AragonApp {
         initialized();
 
         acl = ACL(kernel().acl());
-        datastoreACL = DatastoreACL(_datastoreACL);        
+        datastoreACL = DatastoreACL(_datastoreACL);  
+
+        permissions.init(datastoreACL);
+        groups.init(datastoreACL);              
     }
 
 
